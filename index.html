@@ -1,0 +1,1795 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+<title>SPIN Island</title>
+
+<style>
+
+* {
+    box-sizing: border-box;
+    margin: 0;
+    padding: 0;
+}
+
+html, body {
+    width: 100%;
+    height: 100%;
+    overflow: hidden;
+    font-family: Arial, sans-serif;
+    background: #111;
+}
+
+canvas {
+    display: block;
+}
+
+#menu {
+    position: fixed;
+    inset: 0;
+    background: linear-gradient(
+        135deg,
+        #071b12,
+        #123d27,
+        #07100c
+    );
+
+    display: flex;
+    flex-direction: column;
+    justify-content: center;
+    align-items: center;
+
+    color: white;
+    z-index: 100;
+}
+
+#menu h1 {
+    font-size: 90px;
+    letter-spacing: 18px;
+    margin-bottom: 10px;
+}
+
+#menu p {
+    font-size: 18px;
+    color: #b7d6c0;
+    margin-bottom: 30px;
+}
+
+#startButton {
+    padding: 16px 55px;
+    border: none;
+    border-radius: 8px;
+
+    background: #e5b83f;
+    color: #111;
+
+    font-size: 20px;
+    font-weight: bold;
+
+    cursor: pointer;
+}
+
+#startButton:hover {
+    background: #ffd65a;
+}
+
+#hud {
+    position: fixed;
+    top: 20px;
+    left: 20px;
+
+    color: white;
+    font-weight: bold;
+
+    text-shadow: 2px 2px 4px black;
+
+    z-index: 10;
+}
+
+#healthContainer {
+    width: 220px;
+    height: 22px;
+
+    margin-top: 8px;
+
+    border: 2px solid white;
+    background: #222;
+}
+
+#health {
+    height: 100%;
+    width: 100%;
+
+    background: #36d15b;
+}
+
+#minimap {
+    position: fixed;
+
+    right: 20px;
+    top: 20px;
+
+    width: 190px;
+    height: 190px;
+
+    border: 3px solid white;
+
+    background: #6e9a58;
+
+    z-index: 10;
+}
+
+#instructions {
+    position: fixed;
+
+    bottom: 20px;
+    left: 20px;
+
+    padding: 12px;
+
+    background: rgba(0,0,0,.6);
+
+    border-radius: 8px;
+
+    color: white;
+
+    z-index: 10;
+}
+
+#message {
+    position: fixed;
+
+    left: 50%;
+    top: 50%;
+
+    transform: translate(-50%, -50%);
+
+    color: white;
+
+    font-size: 48px;
+    font-weight: bold;
+
+    text-align: center;
+
+    text-shadow: 3px 3px 8px black;
+
+    display: none;
+
+    z-index: 50;
+}
+
+</style>
+</head>
+
+<body>
+
+<!-- START MENU -->
+
+<div id="menu">
+
+    <h1>SPIN</h1>
+
+    <p>
+        SPIN ISLAND • SURVIVAL
+    </p>
+
+    <button id="startButton">
+        START GAME
+    </button>
+
+</div>
+
+
+<!-- GAME -->
+
+<canvas id="game"></canvas>
+
+<canvas id="minimap"></canvas>
+
+
+<!-- HUD -->
+
+<div id="hud">
+
+    <div>
+        SPIN ISLAND
+    </div>
+
+    <div id="healthContainer">
+        <div id="health"></div>
+    </div>
+
+    <div>
+        Health:
+        <span id="healthText">100</span>
+    </div>
+
+    <div>
+        Players:
+        <span id="playersText">20</span>
+    </div>
+
+    <div>
+        Supplies:
+        <span id="suppliesText">0</span>
+    </div>
+
+    <div>
+        Zone:
+        <span id="zoneText">100%</span>
+    </div>
+
+</div>
+
+
+<!-- CONTROLS -->
+
+<div id="instructions">
+
+    W A S D — Move<br>
+    E — Collect supplies
+
+</div>
+
+
+<!-- GAME MESSAGE -->
+
+<div id="message"></div>
+
+
+<script>
+
+/* =========================================================
+   SPIN ISLAND
+   Version 0.1
+   ========================================================= */
+
+
+/* ================================
+   CANVAS
+================================ */
+
+const canvas = document.getElementById("game");
+
+const ctx = canvas.getContext("2d");
+
+const mini = document.getElementById("minimap");
+
+const miniCtx = mini.getContext("2d");
+
+
+function resize() {
+
+    canvas.width = window.innerWidth;
+
+    canvas.height = window.innerHeight;
+
+}
+
+resize();
+
+window.addEventListener(
+    "resize",
+    resize
+);
+
+
+/* ================================
+   WORLD
+================================ */
+
+const WORLD_WIDTH = 3000;
+
+const WORLD_HEIGHT = 2200;
+
+
+/* ================================
+   PLAYER
+================================ */
+
+const player = {
+
+    x: WORLD_WIDTH / 2,
+
+    y: WORLD_HEIGHT / 2,
+
+    radius: 18,
+
+    speed: 4,
+
+    health: 100,
+
+    supplies: 0
+
+};
+
+
+/* ================================
+   CAMERA
+================================ */
+
+const camera = {
+
+    x: 0,
+
+    y: 0
+
+};
+
+
+/* ================================
+   INPUT
+================================ */
+
+const keys = {};
+
+window.addEventListener(
+    "keydown",
+    function(event) {
+
+        keys[event.key.toLowerCase()] = true;
+
+        if (
+            event.key.toLowerCase() === "e"
+        ) {
+
+            collectSupply();
+
+        }
+
+    }
+);
+
+
+window.addEventListener(
+    "keyup",
+    function(event) {
+
+        keys[event.key.toLowerCase()] = false;
+
+    }
+);
+
+
+/* ================================
+   MAP
+================================ */
+
+const buildings = [];
+
+const trees = [];
+
+const supplies = [];
+
+const bots = [];
+
+
+/* ================================
+   RANDOM
+================================ */
+
+function random(min, max) {
+
+    return Math.random() *
+        (max - min) + min;
+
+}
+
+
+/* ================================
+   CREATE BUILDINGS
+================================ */
+
+function createBuildings() {
+
+    const districts = [
+
+        {
+            x: 250,
+            y: 250,
+            width: 650,
+            height: 400
+        },
+
+        {
+            x: 1250,
+            y: 200,
+            width: 1000,
+            height: 450
+        },
+
+        {
+            x: 300,
+            y: 1250,
+            width: 750,
+            height: 500
+        },
+
+        {
+            x: 1450,
+            y: 1200,
+            width: 1000,
+            height: 600
+        }
+
+    ];
+
+
+    for (
+        const district of districts
+    ) {
+
+        for (
+            let i = 0;
+            i < 18;
+            i++
+        ) {
+
+            buildings.push({
+
+                x: random(
+                    district.x,
+                    district.x +
+                    district.width
+                ),
+
+                y: random(
+                    district.y,
+                    district.y +
+                    district.height
+                ),
+
+                width: random(50, 130),
+
+                height: random(45, 100)
+
+            });
+
+        }
+
+    }
+
+}
+
+
+/* ================================
+   CREATE TREES
+================================ */
+
+function createTrees() {
+
+    for (
+        let i = 0;
+        i < 300;
+        i++
+    ) {
+
+        trees.push({
+
+            x: random(
+                60,
+                WORLD_WIDTH - 60
+            ),
+
+            y: random(
+                60,
+                WORLD_HEIGHT - 60
+            ),
+
+            radius: random(12, 25)
+
+        });
+
+    }
+
+}
+
+
+/* ================================
+   CREATE SUPPLIES
+================================ */
+
+function createSupplies() {
+
+    for (
+        let i = 0;
+        i < 60;
+        i++
+    ) {
+
+        supplies.push({
+
+            x: random(
+                100,
+                WORLD_WIDTH - 100
+            ),
+
+            y: random(
+                100,
+                WORLD_HEIGHT - 100
+            ),
+
+            collected: false
+
+        });
+
+    }
+
+}
+
+
+/* ================================
+   CREATE BOTS
+================================ */
+
+function createBots() {
+
+    for (
+        let i = 0;
+        i < 19;
+        i++
+    ) {
+
+        bots.push({
+
+            x: random(
+                100,
+                WORLD_WIDTH - 100
+            ),
+
+            y: random(
+                100,
+                WORLD_HEIGHT - 100
+            ),
+
+            radius: 15,
+
+            health: 100,
+
+            speed: random(
+                .5,
+                1.5
+            ),
+
+            direction: random(
+                0,
+                Math.PI * 2
+            ),
+
+            timer: random(
+                40,
+                150
+            ),
+
+            alive: true
+
+        });
+
+    }
+
+}
+
+
+/* ================================
+   SAFE ZONE
+================================ */
+
+const zone = {
+
+    x: WORLD_WIDTH / 2,
+
+    y: WORLD_HEIGHT / 2,
+
+    radius: 1000,
+
+    minimum: 180,
+
+    shrinkSpeed: .025
+
+};
+
+
+/* ================================
+   COLLISION
+================================ */
+
+function collision(circle, rectangle) {
+
+    const closestX = Math.max(
+
+        rectangle.x,
+
+        Math.min(
+            circle.x,
+            rectangle.x +
+            rectangle.width
+        )
+
+    );
+
+
+    const closestY = Math.max(
+
+        rectangle.y,
+
+        Math.min(
+            circle.y,
+            rectangle.y +
+            rectangle.height
+        )
+
+    );
+
+
+    const dx =
+        circle.x -
+        closestX;
+
+
+    const dy =
+        circle.y -
+        closestY;
+
+
+    return (
+        dx * dx +
+        dy * dy
+    ) <
+    circle.radius *
+    circle.radius;
+
+}
+
+
+/* ================================
+   PLAYER MOVEMENT
+================================ */
+
+function movePlayer() {
+
+    let dx = 0;
+
+    let dy = 0;
+
+
+    if (
+        keys["w"] ||
+        keys["arrowup"]
+    ) {
+
+        dy--;
+
+    }
+
+
+    if (
+        keys["s"] ||
+        keys["arrowdown"]
+    ) {
+
+        dy++;
+
+    }
+
+
+    if (
+        keys["a"] ||
+        keys["arrowleft"]
+    ) {
+
+        dx--;
+
+    }
+
+
+    if (
+        keys["d"] ||
+        keys["arrowright"]
+    ) {
+
+        dx++;
+
+    }
+
+
+    if (
+        dx !== 0 ||
+        dy !== 0
+    ) {
+
+        const length =
+            Math.sqrt(
+                dx * dx +
+                dy * dy
+            );
+
+
+        dx /= length;
+
+        dy /= length;
+
+
+        const nextX =
+            player.x +
+            dx *
+            player.speed;
+
+
+        const nextY =
+            player.y +
+            dy *
+            player.speed;
+
+
+        const testX = {
+
+            x: nextX,
+
+            y: player.y,
+
+            radius: player.radius
+
+        };
+
+
+        const testY = {
+
+            x: player.x,
+
+            y: nextY,
+
+            radius: player.radius
+
+        };
+
+
+        let hitX = false;
+
+        let hitY = false;
+
+
+        for (
+            const building of buildings
+        ) {
+
+            if (
+                collision(
+                    testX,
+                    building
+                )
+            ) {
+
+                hitX = true;
+
+            }
+
+
+            if (
+                collision(
+                    testY,
+                    building
+                )
+            ) {
+
+                hitY = true;
+
+            }
+
+        }
+
+
+        if (!hitX) {
+
+            player.x = nextX;
+
+        }
+
+
+        if (!hitY) {
+
+            player.y = nextY;
+
+        }
+
+    }
+
+
+    player.x =
+        Math.max(
+            player.radius,
+            Math.min(
+                WORLD_WIDTH -
+                player.radius,
+                player.x
+            )
+        );
+
+
+    player.y =
+        Math.max(
+            player.radius,
+            Math.min(
+                WORLD_HEIGHT -
+                player.radius,
+                player.y
+            )
+        );
+
+}
+
+
+/* ================================
+   BOTS
+================================ */
+
+function updateBots() {
+
+    for (
+        const bot of bots
+    ) {
+
+        if (!bot.alive)
+            continue;
+
+
+        bot.timer--;
+
+
+        if (
+            bot.timer <= 0
+        ) {
+
+            bot.direction =
+                random(
+                    0,
+                    Math.PI * 2
+                );
+
+            bot.timer =
+                random(
+                    60,
+                    180
+                );
+
+        }
+
+
+        bot.x +=
+            Math.cos(
+                bot.direction
+            ) *
+            bot.speed;
+
+
+        bot.y +=
+            Math.sin(
+                bot.direction
+            ) *
+            bot.speed;
+
+
+        bot.x =
+            Math.max(
+                50,
+                Math.min(
+                    WORLD_WIDTH - 50,
+                    bot.x
+                )
+            );
+
+
+        bot.y =
+            Math.max(
+                50,
+                Math.min(
+                    WORLD_HEIGHT - 50,
+                    bot.y
+                )
+            );
+
+
+        const distance =
+            Math.hypot(
+                bot.x - zone.x,
+                bot.y - zone.y
+            );
+
+
+        if (
+            distance >
+            zone.radius
+        ) {
+
+            bot.health -= .03;
+
+        }
+
+
+        if (
+            bot.health <= 0
+        ) {
+
+            bot.alive = false;
+
+        }
+
+    }
+
+}
+
+
+/* ================================
+   ZONE
+================================ */
+
+function updateZone() {
+
+    if (
+        zone.radius >
+        zone.minimum
+    ) {
+
+        zone.radius -=
+            zone.shrinkSpeed;
+
+    }
+
+
+    const distance =
+        Math.hypot(
+            player.x - zone.x,
+            player.y - zone.y
+        );
+
+
+    if (
+        distance >
+        zone.radius
+    ) {
+
+        player.health -= .04;
+
+    }
+
+
+    if (
+        player.health <= 0
+    ) {
+
+        player.health = 0;
+
+        lose();
+
+    }
+
+
+    const percentage =
+        Math.max(
+            0,
+            Math.round(
+                (
+                    (zone.radius -
+                    zone.minimum)
+                    /
+                    (1000 -
+                    zone.minimum)
+                ) * 100
+            )
+        );
+
+
+    document.getElementById(
+        "zoneText"
+    ).textContent =
+        percentage + "%";
+
+}
+
+
+/* ================================
+   SUPPLIES
+================================ */
+
+function collectSupply() {
+
+    for (
+        const supply of supplies
+    ) {
+
+        if (
+            supply.collected
+        )
+            continue;
+
+
+        const distance =
+            Math.hypot(
+                player.x -
+                supply.x,
+
+                player.y -
+                supply.y
+            );
+
+
+        if (
+            distance < 70
+        ) {
+
+            supply.collected =
+                true;
+
+
+            player.supplies++;
+
+
+            player.health =
+                Math.min(
+                    100,
+                    player.health + 10
+                );
+
+
+            document.getElementById(
+                "suppliesText"
+            ).textContent =
+                player.supplies;
+
+
+            break;
+
+        }
+
+    }
+
+}
+
+
+/* ================================
+   CAMERA
+================================ */
+
+function updateCamera() {
+
+    camera.x =
+        player.x -
+        canvas.width / 2;
+
+
+    camera.y =
+        player.y -
+        canvas.height / 2;
+
+
+    camera.x =
+        Math.max(
+            0,
+            Math.min(
+                WORLD_WIDTH -
+                canvas.width,
+                camera.x
+            )
+        );
+
+
+    camera.y =
+        Math.max(
+            0,
+            Math.min(
+                WORLD_HEIGHT -
+                canvas.height,
+                camera.y
+            )
+        );
+
+}
+
+
+/* ================================
+   DRAW MAP
+================================ */
+
+function drawMap() {
+
+    ctx.fillStyle =
+        "#6e9855";
+
+    ctx.fillRect(
+        0,
+        0,
+        canvas.width,
+        canvas.height
+    );
+
+
+    ctx.save();
+
+    ctx.translate(
+        -camera.x,
+        -camera.y
+    );
+
+
+    /* Ground */
+
+    ctx.fillStyle =
+        "#719858";
+
+    ctx.fillRect(
+        0,
+        0,
+        WORLD_WIDTH,
+        WORLD_HEIGHT
+    );
+
+
+    /* Roads */
+
+    ctx.fillStyle =
+        "#b7a47b";
+
+
+    for (
+        const y of
+        [600, 1100, 1650]
+    ) {
+
+        ctx.fillRect(
+            50,
+            y,
+            WORLD_WIDTH - 100,
+            45
+        );
+
+    }
+
+
+    for (
+        const x of
+        [750, 1400, 2200]
+    ) {
+
+        ctx.fillRect(
+            x,
+            50,
+            45,
+            WORLD_HEIGHT - 100
+        );
+
+    }
+
+
+    /* Buildings */
+
+    for (
+        const building of buildings
+    ) {
+
+        ctx.fillStyle =
+            "#75614e";
+
+
+        ctx.fillRect(
+
+            building.x,
+
+            building.y,
+
+            building.width,
+
+            building.height
+
+        );
+
+
+        ctx.strokeStyle =
+            "#40352c";
+
+        ctx.lineWidth = 3;
+
+
+        ctx.strokeRect(
+
+            building.x,
+
+            building.y,
+
+            building.width,
+
+            building.height
+
+        );
+
+
+        ctx.fillStyle =
+            "#514239";
+
+
+        ctx.fillRect(
+
+            building.x + 5,
+
+            building.y + 5,
+
+            building.width - 10,
+
+            9
+
+        );
+
+    }
+
+
+    /* Trees */
+
+    for (
+        const tree of trees
+    ) {
+
+        ctx.fillStyle =
+            "#49352a";
+
+
+        ctx.fillRect(
+
+            tree.x - 4,
+
+            tree.y,
+
+            8,
+
+            18
+
+        );
+
+
+        ctx.beginPath();
+
+
+        ctx.fillStyle =
+            "#315f36";
+
+
+        ctx.arc(
+
+            tree.x,
+
+            tree.y,
+
+            tree.radius,
+
+            0,
+
+            Math.PI * 2
+
+        );
+
+
+        ctx.fill();
+
+    }
+
+
+    /* Supplies */
+
+    for (
+        const supply of supplies
+    ) {
+
+        if (
+            supply.collected
+        )
+            continue;
+
+
+        ctx.fillStyle =
+            "#e5bd3d";
+
+
+        ctx.fillRect(
+
+            supply.x - 9,
+
+            supply.y - 9,
+
+            18,
+
+            18
+
+        );
+
+
+        ctx.fillStyle =
+            "#fff0a0";
+
+
+        ctx.fillRect(
+
+            supply.x - 5,
+
+            supply.y - 5,
+
+            10,
+
+            10
+
+        );
+
+    }
+
+
+    /* SAFE ZONE */
+
+    ctx.beginPath();
+
+
+    ctx.arc(
+
+        zone.x,
+
+        zone.y,
+
+        zone.radius,
+
+        0,
+
+        Math.PI * 2
+
+    );
+
+
+    ctx.strokeStyle =
+        "#7bdcff";
+
+    ctx.lineWidth = 8;
+
+    ctx.stroke();
+
+
+    /* Bots */
+
+    for (
+        const bot of bots
+    ) {
+
+        if (
+            !bot.alive
+        )
+            continue;
+
+
+        ctx.beginPath();
+
+
+        ctx.fillStyle =
+            "#d45f59";
+
+
+        ctx.arc(
+
+            bot.x,
+
+            bot.y,
+
+            bot.radius,
+
+            0,
+
+            Math.PI * 2
+
+        );
+
+
+        ctx.fill();
+
+
+        ctx.strokeStyle =
+            "#551f1c";
+
+        ctx.lineWidth = 3;
+
+        ctx.stroke();
+
+    }
+
+
+    /* PLAYER */
+
+    ctx.beginPath();
+
+
+    ctx.fillStyle =
+        "#f2d34f";
+
+
+    ctx.arc(
+
+        player.x,
+
+        player.y,
+
+        player.radius,
+
+        0,
+
+        Math.PI * 2
+
+    );
+
+
+    ctx.fill();
+
+
+    ctx.strokeStyle =
+        "white";
+
+    ctx.lineWidth = 3;
+
+    ctx.stroke();
+
+
+    ctx.fillStyle =
+        "white";
+
+    ctx.font =
+        "bold 14px Arial";
+
+    ctx.textAlign =
+        "center";
+
+
+    ctx.fillText(
+        "YOU",
+        player.x,
+        player.y - 27
+    );
+
+
+    ctx.restore();
+
+}
+
+
+/* ================================
+   MINIMAP
+================================ */
+
+function drawMinimap() {
+
+    const width =
+        mini.width;
+
+
+    const height =
+        mini.height;
+
+
+    miniCtx.clearRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    miniCtx.fillStyle =
+        "#719858";
+
+
+    miniCtx.fillRect(
+        0,
+        0,
+        width,
+        height
+    );
+
+
+    const scaleX =
+        width /
+        WORLD_WIDTH;
+
+
+    const scaleY =
+        height /
+        WORLD_HEIGHT;
+
+
+    /* Buildings */
+
+    miniCtx.fillStyle =
+        "#55473b";
+
+
+    for (
+        const building of buildings
+    ) {
+
+        miniCtx.fillRect(
+
+            building.x *
+            scaleX,
+
+            building.y *
+            scaleY,
+
+            building.width *
+            scaleX,
+
+            building.height *
+            scaleY
+
+        );
+
+    }
+
+
+    /* Zone */
+
+    miniCtx.beginPath();
+
+
+    miniCtx.arc(
+
+        zone.x *
+        scaleX,
+
+        zone.y *
+        scaleY,
+
+        zone.radius *
+        scaleX,
+
+        0,
+
+        Math.PI * 2
+
+    );
+
+
+    miniCtx.strokeStyle =
+        "#aeeaff";
+
+    miniCtx.lineWidth = 2;
+
+    miniCtx.stroke();
+
+
+    /* Bots */
+
+    for (
+        const bot of bots
+    ) {
+
+        if (
+            !bot.alive
+        )
+            continue;
+
+
+        miniCtx.fillStyle =
+            "#df625c";
+
+
+        miniCtx.fillRect(
+
+            bot.x *
+            scaleX - 2,
+
+            bot.y *
+            scaleY - 2,
+
+            4,
+
+            4
+
+        );
+
+    }
+
+
+    /* Player */
+
+    miniCtx.fillStyle =
+        "white";
+
+
+    miniCtx.fillRect(
+
+        player.x *
+        scaleX - 3,
+
+        player.y *
+        scaleY - 3,
+
+        6,
+
+        6
+
+    );
+
+}
+
+
+/* ================================
+   WIN / LOSE
+================================ */
+
+let gameOver = false;
+
+
+function checkWin() {
+
+    const alive =
+        bots.filter(
+            bot => bot.alive
+        ).length;
+
+
+    document.getElementById(
+        "playersText"
+    ).textContent =
+        alive + 1;
+
+
+    if (
+        alive === 0 &&
+        !gameOver
+    ) {
+
+        win();
+
+    }
+
+}
+
+
+function win() {
+
+    gameOver = true;
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.innerHTML =
+        "🏆 SPIN CHAMPION!<br>" +
+        "<small>You survived SPIN Island.</small>";
+
+
+    message.style.display =
+        "block";
+
+}
+
+
+function lose() {
+
+    if (
+        gameOver
+    )
+        return;
+
+
+    gameOver = true;
+
+
+    const message =
+        document.getElementById(
+            "message"
+        );
+
+
+    message.innerHTML =
+        "GAME OVER<br>" +
+        "<small>Try again!</small>";
+
+
+    message.style.display =
+        "block";
+
+}
+
+
+/* ================================
+   GAME LOOP
+================================ */
+
+function update() {
+
+    if (
+        !gameStarted ||
+        gameOver
+    )
+        return;
+
+
+    movePlayer();
+
+    updateBots();
+
+    updateZone();
+
+    updateCamera();
+
+    checkWin();
+
+
+    document.getElementById(
+        "health"
+    ).style.width =
+        player.health + "%";
+
+
+    document.getElementById(
+        "healthText"
+    ).textContent =
+        Math.round(
+            player.health
+        );
+
+}
+
+
+function draw() {
+
+    drawMap();
+
+    drawMinimap();
+
+    update();
+
+    requestAnimationFrame(
+        draw
+    );
+
+}
+
+
+/* ================================
+   START GAME
+================================ */
+
+let gameStarted = false;
+
+
+document.getElementById(
+    "startButton"
+).addEventListener(
+    "click",
+    function() {
+
+        document.getElementById(
+            "menu"
+        ).style.display =
+            "none";
+
+
+        gameStarted = true;
+
+
+        createBuildings();
+
+        createTrees();
+
+        createSupplies();
+
+        createBots();
+
+
+        updateCamera();
+
+
+        draw();
+
+    }
+);
+
+</script>
+
+</body>
+</html>
