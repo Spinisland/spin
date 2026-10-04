@@ -2,402 +2,496 @@
 <html lang="en">
 <head>
 <meta charset="UTF-8">
-<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="viewport" content="width=device-width,initial-scale=1.0">
 <title>FF Rewards Hub</title>
 
 <style>
-*{
-    box-sizing:border-box;
-    margin:0;
-    padding:0;
-}
-
-html{
-    scroll-behavior:smooth;
-}
+*{box-sizing:border-box;margin:0;padding:0}
 
 body{
-    font-family:Arial,sans-serif;
-    background:#080808;
-    color:white;
+font-family:Arial,sans-serif;
+background:#070707;
+color:white;
 }
 
 header{
-    position:sticky;
-    top:0;
-    z-index:10;
-    height:70px;
-    background:#050505;
-    border-bottom:1px solid #292929;
-    display:flex;
-    align-items:center;
-    justify-content:space-between;
-    padding:0 7%;
+height:70px;
+display:flex;
+align-items:center;
+justify-content:space-between;
+padding:0 6%;
+background:#101010;
+border-bottom:1px solid #292929;
+position:sticky;
+top:0;
+z-index:10;
 }
 
 .logo{
-    font-size:23px;
-    font-weight:900;
+font-size:25px;
+font-weight:900;
 }
 
 .logo span{
-    color:#ff9d00;
+color:#ff9d00;
 }
 
 nav{
-    display:flex;
-    gap:25px;
+display:flex;
+gap:25px;
 }
 
 nav a{
-    color:#ccc;
-    text-decoration:none;
-    font-weight:bold;
+color:#ccc;
+text-decoration:none;
+font-weight:bold;
 }
 
 nav a:hover{
-    color:#ff9d00;
+color:#ff9d00;
 }
 
 .hero{
-    min-height:620px;
-    display:flex;
-    align-items:center;
-    padding:70px 10%;
-    background:
-    radial-gradient(circle at 75% 50%,#472b00,#090909 55%);
-}
-
-.hero-content{
-    max-width:700px;
-}
-
-.small{
-    color:#ff9d00;
-    letter-spacing:5px;
-    font-weight:bold;
-    margin-bottom:20px;
+min-height:620px;
+display:flex;
+align-items:center;
+padding:80px 8%;
+background:
+radial-gradient(circle at 80% 40%,#553000,#170e02 25%,#070707 60%);
 }
 
 .hero h1{
-    font-size:clamp(60px,10vw,120px);
-    line-height:.85;
+font-size:clamp(60px,9vw,125px);
+line-height:.85;
+font-weight:1000;
 }
 
 .hero h1 span{
-    color:#ff9d00;
+color:#ff9d00;
 }
 
 .hero p{
-    color:#aaa;
-    line-height:1.7;
-    margin:35px 0;
+max-width:650px;
+color:#aaa;
+font-size:18px;
+line-height:1.7;
+margin:30px 0;
 }
 
-.button{
-    display:inline-block;
-    padding:16px 30px;
-    background:#ff9d00;
-    color:#000;
-    text-decoration:none;
-    font-weight:900;
+.btn{
+display:inline-block;
+padding:15px 25px;
+background:#ff9d00;
+color:#000;
+font-weight:900;
+text-decoration:none;
+border:none;
+cursor:pointer;
 }
 
-.section{
-    padding:90px 8%;
+.btn.dark{
+background:#202020;
+color:#fff;
+margin-left:10px;
+}
+
+.stats{
+display:grid;
+grid-template-columns:repeat(4,1fr);
+background:#111;
+}
+
+.stat{
+text-align:center;
+padding:25px;
+border-right:1px solid #292929;
+}
+
+.stat strong{
+display:block;
+font-size:30px;
+color:#ff9d00;
+}
+
+.stat span{
+color:#777;
+font-size:12px;
+}
+
+section{
+padding:90px 7%;
 }
 
 .dark{
-    background:#101010;
+background:#0d0d0d;
 }
 
-.title p{
-    color:#ff9d00;
-    letter-spacing:4px;
-    font-size:13px;
-    font-weight:bold;
+.title small{
+color:#ff9d00;
+letter-spacing:4px;
+font-weight:bold;
 }
 
 .title h2{
-    font-size:45px;
-    margin-top:8px;
+font-size:45px;
+margin:10px 0;
 }
 
-.code-grid{
-    margin-top:45px;
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fit,minmax(280px,1fr));
-    gap:25px;
+.title p{
+color:#888;
+}
+
+.games{
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+margin-top:45px;
 }
 
 .card{
-    background:#121212;
-    border:1px solid #292929;
-    padding:25px;
+background:#151515;
+border:1px solid #292929;
+padding:30px;
+transition:.2s;
 }
 
 .card:hover{
-    border-color:#ff9d00;
+transform:translateY(-5px);
+border-color:#ff9d00;
 }
 
-.status{
-    color:#58d85c;
-    font-size:12px;
-    font-weight:bold;
+.icon{
+font-size:45px;
+margin:20px 0;
 }
 
 .card h3{
-    margin:15px 0;
+font-size:25px;
 }
 
 .card p{
-    color:#999;
+color:#888;
+line-height:1.6;
+margin:12px 0 25px;
+}
+
+.game{
+display:none;
+margin-top:35px;
+padding:30px;
+background:#080808;
+border:1px solid #292929;
+}
+
+.game.active{
+display:block;
+}
+
+.game-top{
+display:flex;
+justify-content:space-between;
+align-items:center;
+margin-bottom:25px;
+}
+
+.close{
+background:#222;
+color:#fff;
+border:1px solid #444;
+padding:10px 15px;
+cursor:pointer;
+}
+
+canvas{
+display:block;
+width:100%;
+max-width:600px;
+height:auto;
+margin:auto;
+background:#000;
+border:2px solid #292929;
+}
+
+.controls{
+display:flex;
+justify-content:center;
+gap:8px;
+margin-top:20px;
+flex-wrap:wrap;
+}
+
+.controls button{
+width:55px;
+height:45px;
+background:#222;
+color:#fff;
+border:0;
+cursor:pointer;
+}
+
+.controls button:hover{
+background:#ff9d00;
+color:#000;
+}
+
+.reaction{
+height:350px;
+display:flex;
+align-items:center;
+justify-content:center;
+text-align:center;
+background:#151515;
+border:2px solid #292929;
+cursor:pointer;
+}
+
+.reaction.wait{
+background:#2b1800;
+}
+
+.reaction.go{
+background:#104518;
+}
+
+.reaction h2{
+font-size:38px;
+}
+
+.reaction p{
+color:#aaa;
+margin-top:10px;
+}
+
+.memory{
+max-width:600px;
+margin:auto;
+display:grid;
+grid-template-columns:repeat(4,1fr);
+gap:10px;
+}
+
+.memory button{
+aspect-ratio:1;
+border:0;
+background:#222;
+font-size:30px;
+color:transparent;
+cursor:pointer;
+}
+
+.memory button.open,
+.memory button.done{
+background:#ff9d00;
+color:#000;
+}
+
+.wallet{
+display:grid;
+grid-template-columns:280px 1fr;
+gap:25px;
+margin-top:45px;
+}
+
+.wallet-box{
+background:#151515;
+border:1px solid #292929;
+padding:35px;
+}
+
+.balance{
+text-align:center;
+}
+
+.balance strong{
+display:block;
+font-size:60px;
+color:#ff9d00;
+margin-top:10px;
+}
+
+.wallet-box p{
+color:#888;
+line-height:1.7;
+}
+
+.codes{
+display:grid;
+grid-template-columns:repeat(auto-fit,minmax(300px,1fr));
+gap:25px;
+margin-top:45px;
 }
 
 .code{
-    margin:20px 0;
-    padding:15px;
-    background:#050505;
-    border:1px dashed #555;
-    font-family:monospace;
-    font-size:17px;
-    word-break:break-all;
+background:#151515;
+border:1px solid #292929;
+padding:25px;
 }
 
-.buttons{
-    display:flex;
-    gap:10px;
+.code-status{
+color:#5ee267;
+font-size:12px;
+font-weight:bold;
 }
 
-.buttons button,
-.buttons a{
-    flex:1;
-    padding:12px;
-    border:0;
-    text-align:center;
-    font-weight:bold;
-    cursor:pointer;
-    text-decoration:none;
+.code h3{
+margin:15px 0;
 }
 
-.copy{
-    background:#292929;
-    color:white;
+.code-value{
+background:#050505;
+border:1px dashed #555;
+padding:18px;
+font-family:monospace;
+font-size:18px;
+letter-spacing:2px;
+margin:20px 0;
 }
 
-.redeem{
-    background:#ff9d00;
-    color:black;
+.code button{
+padding:12px 20px;
+background:#ff9d00;
+border:0;
+font-weight:bold;
+cursor:pointer;
 }
 
-.coin-area{
-    margin-top:45px;
-    display:grid;
-    grid-template-columns:250px 1fr;
-    gap:25px;
+.profile{
+display:grid;
+grid-template-columns:1fr 1fr;
+gap:25px;
+margin-top:45px;
 }
 
-.coin-box,
-.game-box,
-.leaderboard{
-    background:#161616;
-    border:1px solid #292929;
-    padding:35px;
+.profile-box{
+background:#151515;
+border:1px solid #292929;
+padding:30px;
 }
 
-.coin-box{
-    text-align:center;
+input{
+width:100%;
+padding:15px;
+background:#080808;
+border:1px solid #444;
+color:white;
+margin:15px 0;
+outline:none;
 }
 
-.coin-box span{
-    color:#999;
-    font-size:13px;
+.profile-row{
+display:flex;
+justify-content:space-between;
+padding:15px 0;
+border-bottom:1px solid #292929;
 }
 
-#coins{
-    display:block;
-    color:#ff9d00;
-    font-size:55px;
-    font-weight:900;
-    margin-top:10px;
+.profile-row span{
+color:#888;
 }
 
-.game-box{
-    text-align:center;
-}
-
-.game-box h3{
-    font-size:27px;
-}
-
-.game-box p{
-    color:#aaa;
-    line-height:1.6;
-    margin:15px auto 20px;
-    max-width:500px;
-}
-
-#timer{
-    color:#ff9d00;
-    font-size:60px;
-    font-weight:900;
-}
-
-#clicks{
-    color:#aaa;
-    margin:10px;
-}
-
-.game-btn{
-    padding:14px 25px;
-    border:0;
-    background:#ff9d00;
-    font-weight:bold;
-    cursor:pointer;
-    margin:5px;
-}
-
-#clickButton{
-    background:#333;
-    color:white;
-}
-
-#clickButton:disabled{
-    opacity:.4;
-}
-
-#gameMessage{
-    color:#ff9d00;
-    margin-top:15px;
+.profile-row strong{
+color:#ff9d00;
 }
 
 .leaderboard{
-    max-width:800px;
-    margin-top:45px;
-}
-
-.input-area{
-    display:flex;
-    gap:10px;
-    margin-bottom:25px;
-}
-
-.input-area input{
-    flex:1;
-    padding:15px;
-    background:#0d0d0d;
-    border:1px solid #333;
-    color:white;
-}
-
-.input-area button{
-    padding:15px 25px;
-    background:#ff9d00;
-    border:0;
-    font-weight:bold;
-    cursor:pointer;
+max-width:800px;
+margin:45px auto;
+background:#151515;
+border:1px solid #292929;
 }
 
 .player{
-    display:flex;
-    justify-content:space-between;
-    padding:17px;
-    background:#111;
-    border-bottom:1px solid #292929;
+display:grid;
+grid-template-columns:70px 1fr 150px;
+padding:20px;
+border-bottom:1px solid #292929;
 }
 
-.player-score{
-    color:#ff9d00;
-    font-weight:bold;
+.player span:last-child{
+text-align:right;
+color:#ff9d00;
+font-weight:bold;
 }
 
 .info{
-    padding:80px 8%;
-    background:#050505;
+display:grid;
+grid-template-columns:repeat(3,1fr);
+gap:25px;
+margin-top:45px;
 }
 
-.info h2{
-    font-size:40px;
+.info-box{
+background:#111;
+border:1px solid #292929;
+padding:30px;
 }
 
-.steps{
-    margin-top:35px;
-    display:grid;
-    grid-template-columns:
-    repeat(auto-fit,minmax(200px,1fr));
-    gap:20px;
+.info-box b{
+font-size:30px;
+color:#ff9d00;
 }
 
-.step{
-    padding:30px;
-    background:#111;
-    border:1px solid #252525;
+.info-box h3{
+margin:15px 0;
 }
 
-.step b{
-    color:#ff9d00;
-    font-size:30px;
-}
-
-.step h3{
-    margin:15px 0;
-}
-
-.step p{
-    color:#aaa;
-    line-height:1.6;
+.info-box p{
+color:#888;
+line-height:1.7;
 }
 
 footer{
-    padding:50px 8%;
-    text-align:center;
-    background:#020202;
-    border-top:1px solid #222;
+padding:60px 7%;
+background:#020202;
+text-align:center;
+border-top:1px solid #292929;
 }
 
 footer p{
-    color:#777;
-    margin:15px;
+color:#666;
+margin:15px 0;
 }
 
 footer a{
-    color:#ff9d00;
+color:#ff9d00;
 }
 
-@media(max-width:700px){
+@media(max-width:850px){
 
-    header{
-        padding:0 20px;
-    }
+nav{
+display:none;
+}
 
-    nav{
-        display:none;
-    }
+.games{
+grid-template-columns:1fr;
+}
 
-    .hero{
-        padding:60px 25px;
-    }
+.wallet,
+.profile,
+.info{
+grid-template-columns:1fr;
+}
 
-    .section{
-        padding:70px 20px;
-    }
+.stats{
+grid-template-columns:repeat(2,1fr);
+}
 
-    .title h2{
-        font-size:38px;
-    }
+}
 
-    .coin-area{
-        grid-template-columns:1fr;
-    }
+@media(max-width:600px){
 
-    .input-area{
-        flex-direction:column;
-    }
+section{
+padding:65px 20px;
+}
 
-    .buttons{
-        flex-direction:column;
-    }
+.hero{
+padding:70px 25px;
+}
+
+.title h2{
+font-size:36px;
+}
+
 }
 </style>
 </head>
@@ -411,9 +505,10 @@ FF <span>REWARDS</span>
 </div>
 
 <nav>
+<a href="#games">Games</a>
+<a href="#coins">Coins</a>
 <a href="#codes">Codes</a>
-<a href="#game">Game</a>
-<a href="#leaderboard">Leaderboard</a>
+<a href="#profile">Profile</a>
 </nav>
 
 </header>
@@ -421,25 +516,26 @@ FF <span>REWARDS</span>
 
 <section class="hero">
 
-<div class="hero-content">
-
-<div class="small">
-FREE FIRE COMMUNITY
-</div>
+<div>
 
 <h1>
-REWARDS<br>
-<span>HUB</span>
+PLAY.<br>
+<span>EARN.</span><br>
+REWARD.
 </h1>
 
 <p>
-Find legitimate Free Fire reward opportunities,
-play games, earn website coins and check
-available redeem codes.
+Play free browser games, earn virtual coins,
+track your scores and discover legitimate
+Free Fire reward opportunities.
 </p>
 
-<a href="#codes" class="button">
-VIEW REWARDS
+<a class="btn" href="#games">
+PLAY NOW
+</a>
+
+<a class="btn dark" href="#codes">
+CODES
 </a>
 
 </div>
@@ -447,64 +543,229 @@ VIEW REWARDS
 </section>
 
 
-<section class="section" id="codes">
+<div class="stats">
+
+<div class="stat">
+<strong>3</strong>
+<span>GAMES</span>
+</div>
+
+<div class="stat">
+<strong id="topCoins">0</strong>
+<span>COINS</span>
+</div>
+
+<div class="stat">
+<strong id="topGames">0</strong>
+<span>GAMES PLAYED</span>
+</div>
+
+<div class="stat">
+<strong>FREE</strong>
+<span>ACCESS</span>
+</div>
+
+</div>
+
+
+<section class="dark" id="games">
 
 <div class="title">
-
-<p>REDEEM</p>
-
-<h2>REWARD CODES</h2>
-
-</div>
-
-<div class="code-grid" id="codeContainer"></div>
-
-</section>
-
-
-<section class="section dark" id="game">
-
-<div class="title">
-
-<p>PLAY & EARN</p>
-
-<h2>COIN GAME</h2>
-
-</div>
-
-<div class="coin-area">
-
-<div class="coin-box">
-
-<span>YOUR COINS</span>
-
-<strong id="coins">0</strong>
-
+<small>ARCADE</small>
+<h2>PLAY GAMES</h2>
+<p>All games run directly inside your browser.</p>
 </div>
 
 
-<div class="game-box">
+<div class="games">
 
-<h3>⚡ CLICK CHALLENGE</h3>
+
+<div class="card">
+
+<div class="icon">🐍</div>
+
+<h3>Snake</h3>
 
 <p>
-You have 10 seconds. Click as many times
-as possible to earn website coins.
+Eat the food and make your snake as long
+as possible.
 </p>
 
-<div id="timer">10</div>
-
-<div id="clicks">0 clicks</div>
-
-<button class="game-btn" id="start">
-START GAME
+<button class="btn"
+onclick="openGame('snake')">
+PLAY
 </button>
 
-<button class="game-btn" id="clickButton" disabled>
-CLICK!
+</div>
+
+
+<div class="card">
+
+<div class="icon">⚡</div>
+
+<h3>Reaction</h3>
+
+<p>
+Test how quickly you can react to the green
+signal.
+</p>
+
+<button class="btn"
+onclick="openGame('reaction')">
+PLAY
 </button>
 
-<div id="gameMessage"></div>
+</div>
+
+
+<div class="card">
+
+<div class="icon">🧠</div>
+
+<h3>Memory</h3>
+
+<p>
+Find all matching pairs using the fewest
+moves possible.
+</p>
+
+<button class="btn"
+onclick="openGame('memory')">
+PLAY
+</button>
+
+</div>
+
+</div>
+
+
+<div class="game" id="snake">
+
+<div class="game-top">
+<h2>🐍 Snake</h2>
+<button class="close" onclick="closeGames()">CLOSE</button>
+</div>
+
+<canvas id="canvas" width="600" height="400"></canvas>
+
+<p style="text-align:center;margin:15px">
+Score:
+<strong id="snakeScore">0</strong>
+</p>
+
+<div class="controls">
+
+<button onclick="move('up')">▲</button>
+<button onclick="move('left')">◀</button>
+<button onclick="move('down')">▼</button>
+<button onclick="move('right')">▶</button>
+
+<button onclick="startSnake()">
+START
+</button>
+
+</div>
+
+</div>
+
+
+<div class="game" id="reaction">
+
+<div class="game-top">
+<h2>⚡ Reaction Test</h2>
+<button class="close" onclick="closeGames()">CLOSE</button>
+</div>
+
+<div id="reactionBox" class="reaction">
+
+<div>
+
+<h2 id="reactionText">
+READY?
+</h2>
+
+<p id="reactionInfo">
+Press START and wait for green.
+</p>
+
+<button class="btn"
+onclick="startReaction()">
+START
+</button>
+
+</div>
+
+</div>
+
+</div>
+
+
+<div class="game" id="memory">
+
+<div class="game-top">
+<h2>🧠 Memory Match</h2>
+<button class="close" onclick="closeGames()">CLOSE</button>
+</div>
+
+<p style="text-align:center;margin-bottom:20px">
+Moves:
+<strong id="moves">0</strong>
+</p>
+
+<div id="memoryGrid" class="memory"></div>
+
+</div>
+
+</section>
+
+
+<section id="coins">
+
+<div class="title">
+
+<small>ACCOUNT</small>
+
+<h2>YOUR COINS</h2>
+
+<p>
+Virtual points earned from playing games.
+</p>
+
+</div>
+
+
+<div class="wallet">
+
+<div class="wallet-box balance">
+
+<span>COINS</span>
+
+<strong id="coinBalance">
+0
+</strong>
+
+</div>
+
+
+<div class="wallet-box">
+
+<h3>How it works</h3>
+
+<br>
+
+<p>
+Play games to earn virtual coins. Your
+balance is automatically saved in your
+browser.
+</p>
+
+<br>
+
+<p>
+Coins on this website are virtual points.
+They are not Free Fire diamonds and cannot
+be converted into Garena currency.
+</p>
 
 </div>
 
@@ -513,30 +774,167 @@ CLICK!
 </section>
 
 
-<section class="section" id="leaderboard">
+<section class="dark" id="codes">
 
 <div class="title">
 
-<p>COMMUNITY</p>
+<small>REWARDS</small>
+
+<h2>REDEEM CODES</h2>
+
+<p>
+Only use verified codes from legitimate
+sources.
+</p>
+
+</div>
+
+
+<div class="codes">
+
+<div class="code">
+
+<div class="code-status">
+● DEMO
+</div>
+
+<h3>Community Reward</h3>
+
+<p style="color:#888">
+Example code
+</p>
+
+<div class="code-value">
+DEMO-FF-001
+</div>
+
+<button onclick="copyCode('DEMO-FF-001')">
+COPY CODE
+</button>
+
+</div>
+
+
+<div class="code">
+
+<div class="code-status">
+● DEMO
+</div>
+
+<h3>Community Reward</h3>
+
+<p style="color:#888">
+Example code
+</p>
+
+<div class="code-value">
+DEMO-FF-002
+</div>
+
+<button onclick="copyCode('DEMO-FF-002')">
+COPY CODE
+</button>
+
+</div>
+
+</div>
+
+<br><br>
+
+<a
+class="btn"
+href="https://reward.ff.garena.com/"
+target="_blank">
+
+OFFICIAL GARENA REDEMPTION PAGE
+
+</a>
+
+</section>
+
+
+<section id="profile">
+
+<div class="title">
+
+<small>PLAYER</small>
+
+<h2>PROFILE</h2>
+
+</div>
+
+
+<div class="profile">
+
+<div class="profile-box">
+
+<h3>Player Name</h3>
+
+<input
+id="nameInput"
+placeholder="Enter your name"
+maxlength="20">
+
+<button class="btn"
+onclick="saveName()">
+SAVE
+</button>
+
+</div>
+
+
+<div class="profile-box">
+
+<h3>Statistics</h3>
+
+<div class="profile-row">
+<span>Name</span>
+<strong id="profileName">Guest</strong>
+</div>
+
+<div class="profile-row">
+<span>Coins</span>
+<strong id="profileCoins">0</strong>
+</div>
+
+<div class="profile-row">
+<span>Games Played</span>
+<strong id="profileGames">0</strong>
+</div>
+
+<div class="profile-row">
+<span>Snake Best</span>
+<strong id="bestSnake">0</strong>
+</div>
+
+</div>
+
+</div>
+
+</section>
+
+
+<section class="dark">
+
+<div class="title">
+
+<small>COMPETE</small>
 
 <h2>LEADERBOARD</h2>
 
+<p>
+Local leaderboard stored on this device.
+</p>
+
 </div>
+
 
 <div class="leaderboard">
 
-<div class="input-area">
-
-<input
-id="name"
-maxlength="20"
-placeholder="Enter your nickname"
->
-
-<button id="save">
-SAVE SCORE
-</button>
-
+<div class="player">
+<span>#</span>
+<span>PLAYER</span>
+<span>COINS</span>
 </div>
 
 <div id="players"></div>
@@ -546,35 +944,58 @@ SAVE SCORE
 </section>
 
 
-<section class="info">
+<section>
 
-<h2>HOW IT WORKS</h2>
+<div class="title">
 
-<div class="steps">
+<small>HOW IT WORKS</small>
 
-<div class="step">
+<h2>THE SYSTEM</h2>
+
+</div>
+
+
+<div class="info">
+
+<div class="info-box">
+
 <b>01</b>
-<h3>FIND</h3>
-<p>
-Check legitimate reward codes and events.
-</p>
-</div>
 
-<div class="step">
-<b>02</b>
 <h3>PLAY</h3>
+
 <p>
-Play the mini game and earn website coins.
+Choose one of the games and play directly
+inside the website.
 </p>
+
 </div>
 
-<div class="step">
-<b>03</b>
-<h3>REDEEM</h3>
+
+<div class="info-box">
+
+<b>02</b>
+
+<h3>EARN</h3>
+
 <p>
-Use valid codes through Garena's official
-redemption system.
+Game performance gives you virtual points
+that are stored locally.
 </p>
+
+</div>
+
+
+<div class="info-box">
+
+<b>03</b>
+
+<h3>REDEEM</h3>
+
+<p>
+Check verified reward information and use
+the official Garena redemption website.
+</p>
+
 </div>
 
 </div>
@@ -584,16 +1005,19 @@ redemption system.
 
 <footer>
 
-<strong>FF REWARDS HUB</strong>
+<h2>FF REWARDS HUB</h2>
 
 <p>
-Community website. Not affiliated with Garena.
+Independent community project.
+Not affiliated with Garena or Free Fire.
 </p>
 
 <a
 href="https://reward.ff.garena.com/"
 target="_blank">
-Official Garena Redemption
+
+Official Garena Redemption Website
+
 </a>
 
 </footer>
@@ -601,432 +1025,660 @@ Official Garena Redemption
 
 <script>
 
-/* ================================
-   REDEEM CODES
+/* ===============================
+   DATA
 ================================ */
 
-/*
-IMPORTANT:
+let coins=
+Number(localStorage.getItem("coins"))||0;
 
-These are placeholders.
+let games=
+Number(localStorage.getItem("games"))||0;
 
-Only put REAL codes here that
-Garena has officially released.
-*/
+let bestSnake=
+Number(localStorage.getItem("bestSnake"))||0;
 
-const codes = [
-
-{
-code:"DEMO-CODE-001",
-title:"Demo Reward",
-region:"Global",
-expires:"2026-12-31T23:59:59"
-},
-
-{
-code:"DEMO-CODE-002",
-title:"Demo Reward",
-region:"Global",
-expires:"2026-12-31T23:59:59"
-}
-
-];
+let player=
+localStorage.getItem("player")||"Guest";
 
 
-const codeContainer =
-document.getElementById("codeContainer");
-
-
-function displayCodes(){
-
-codeContainer.innerHTML="";
-
-codes.forEach((item,index)=>{
-
-const card =
-document.createElement("div");
-
-card.className="card";
-
-card.innerHTML=`
-
-<div class="status">
-● CHECK BEFORE REDEEMING
-</div>
-
-<h3>${item.title}</h3>
-
-<p>Region: ${item.region}</p>
-
-<div class="code">
-${item.code}
-</div>
-
-<p id="expiry${index}">
-Checking expiry...
-</p>
-
-<br>
-
-<div class="buttons">
-
-<button
-class="copy"
-onclick="copyCode('${item.code}')">
-COPY
-</button>
-
-<a
-class="redeem"
-href="https://reward.ff.garena.com/"
-target="_blank">
-REDEEM
-</a>
-
-</div>
-`;
-
-codeContainer.appendChild(card);
-
-updateExpiry(
-item.expires,
-document.getElementById(
-"expiry"+index
-)
-);
-
-});
-
-}
-
-displayCodes();
-
-
-/* ================================
-   COPY CODE
+/* ===============================
+   UPDATE
 ================================ */
-
-function copyCode(code){
-
-navigator.clipboard.writeText(code)
-
-.then(()=>{
-
-alert(
-"Code copied! Open Garena's official redemption page."
-);
-
-})
-
-.catch(()=>{
-
-alert("Copy failed. Copy it manually.");
-
-});
-
-}
-
-
-/* ================================
-   EXPIRY TIMER
-================================ */
-
-function updateExpiry(date,element){
 
 function update(){
 
-const target =
-new Date(date).getTime();
+document.getElementById("coinBalance")
+.textContent=coins;
 
-const now =
-Date.now();
+document.getElementById("topCoins")
+.textContent=coins;
 
-const difference =
-target-now;
+document.getElementById("profileCoins")
+.textContent=coins;
 
-if(difference<=0){
+document.getElementById("topGames")
+.textContent=games;
 
-element.textContent="Expired";
+document.getElementById("profileGames")
+.textContent=games;
 
-element.style.color="#ff5555";
+document.getElementById("bestSnake")
+.textContent=bestSnake;
 
-return;
-
-}
-
-const days =
-Math.floor(
-difference/
-(1000*60*60*24)
-);
-
-const hours =
-Math.floor(
-(difference/
-(1000*60*60))%24
-);
-
-const minutes =
-Math.floor(
-(difference/
-(1000*60))%60
-);
-
-element.textContent =
-"Expires in "+
-days+"d "+
-hours+"h "+
-minutes+"m";
+document.getElementById("profileName")
+.textContent=player;
 
 }
 
 update();
 
-setInterval(update,60000);
+
+/* ===============================
+   GAMES
+================================ */
+
+function openGame(id){
+
+closeGames();
+
+document.getElementById(id)
+.classList.add("active");
+
+document.getElementById(id)
+.scrollIntoView({
+behavior:"smooth",
+block:"center"
+});
+
+}
+
+function closeGames(){
+
+document.querySelectorAll(".game")
+.forEach(x=>{
+x.classList.remove("active");
+});
 
 }
 
 
-/* ================================
+/* ===============================
    COINS
 ================================ */
 
-let coins =
-Number(
-localStorage.getItem("ffCoins")
-)||0;
+function earn(amount){
 
-
-const coinDisplay =
-document.getElementById("coins");
-
-
-function updateCoins(){
-
-coinDisplay.textContent =
-coins.toLocaleString();
+coins+=amount;
 
 localStorage.setItem(
-"ffCoins",
+"coins",
 coins
 );
 
+update();
+
 }
 
-updateCoins();
 
-
-/* ================================
-   GAME
+/* ===============================
+   SNAKE
 ================================ */
 
-let running=false;
-let clicks=0;
-let time=10;
-let timer;
+const canvas=
+document.getElementById("canvas");
+
+const ctx=
+canvas.getContext("2d");
+
+const size=20;
+
+const cols=30;
+
+const rows=20;
+
+let snake=[];
+
+let food={};
+
+let direction={x:1,y:0};
+
+let snakeScore=0;
+
+let snakeTimer;
 
 
-const start =
-document.getElementById("start");
+function startSnake(){
 
-const clickButton =
-document.getElementById("clickButton");
+snake=[
+{x:10,y:10},
+{x:9,y:10},
+{x:8,y:10}
+];
 
-const timerDisplay =
-document.getElementById("timer");
+direction={x:1,y:0};
 
-const clicksDisplay =
-document.getElementById("clicks");
+snakeScore=0;
 
-const message =
-document.getElementById("gameMessage");
+placeFood();
 
+clearInterval(snakeTimer);
 
-start.onclick=function(){
-
-if(running)return;
-
-running=true;
-
-clicks=0;
-
-time=10;
-
-timerDisplay.textContent="10";
-
-clicksDisplay.textContent="0 clicks";
-
-message.textContent="GO!";
-
-start.disabled=true;
-
-clickButton.disabled=false;
-
-
-timer=setInterval(function(){
-
-time--;
-
-timerDisplay.textContent=time;
-
-if(time<=0){
-
-finishGame();
+snakeTimer=
+setInterval(snakeGame,100);
 
 }
 
-},1000);
 
+function placeFood(){
+
+food={
+x:Math.floor(Math.random()*cols),
+y:Math.floor(Math.random()*rows)
+};
+
+}
+
+
+function snakeGame(){
+
+let head={
+x:snake[0].x+direction.x,
+y:snake[0].y+direction.y
 };
 
 
-clickButton.onclick=function(){
+if(
+head.x<0||
+head.x>=cols||
+head.y<0||
+head.y>=rows
+){
 
-if(!running)return;
-
-clicks++;
-
-clicksDisplay.textContent =
-clicks+" clicks";
-
-};
-
-
-function finishGame(){
-
-clearInterval(timer);
-
-running=false;
-
-clickButton.disabled=true;
-
-start.disabled=false;
-
-coins+=clicks;
-
-updateCoins();
-
-message.textContent =
-"Finished! You earned "+
-clicks+
-" coins.";
-
-}
-
-
-/* ================================
-   LEADERBOARD
-================================ */
-
-let leaderboard =
-JSON.parse(
-localStorage.getItem(
-"ffLeaderboard"
-)
-)||[];
-
-
-const players =
-document.getElementById("players");
-
-
-function safe(text){
-
-const div =
-document.createElement("div");
-
-div.textContent=text;
-
-return div.innerHTML;
-
-}
-
-
-function displayLeaderboard(){
-
-players.innerHTML="";
-
-leaderboard
-.sort((a,b)=>b.score-a.score)
-.slice(0,20)
-.forEach((player,index)=>{
-
-const row =
-document.createElement("div");
-
-row.className="player";
-
-row.innerHTML=`
-
-<span>
-#${index+1}
-${safe(player.name)}
-</span>
-
-<span class="player-score">
-${player.score} coins
-</span>
-
-`;
-
-players.appendChild(row);
-
-});
-
-}
-
-
-document.getElementById("save").onclick=function(){
-
-const name =
-document.getElementById("name")
-.value.trim();
-
-
-if(!name){
-
-alert("Enter your nickname.");
+stopSnake();
 
 return;
 
 }
 
 
-if(coins<=0){
+for(let part of snake){
 
-alert(
-"Play the game first and earn coins."
+if(
+head.x===part.x&&
+head.y===part.y
+){
+
+stopSnake();
+
+return;
+
+}
+
+}
+
+
+snake.unshift(head);
+
+
+if(
+head.x===food.x&&
+head.y===food.y
+){
+
+snakeScore++;
+
+placeFood();
+
+}else{
+
+snake.pop();
+
+}
+
+
+ctx.fillStyle="#000";
+
+ctx.fillRect(
+0,0,
+canvas.width,
+canvas.height
 );
 
-return;
+
+ctx.fillStyle="#ff9d00";
+
+ctx.fillRect(
+food.x*size,
+food.y*size,
+size-2,
+size-2
+);
+
+
+snake.forEach(
+(part,i)=>{
+
+ctx.fillStyle=
+i===0?"#ff9d00":"#fff";
+
+ctx.fillRect(
+part.x*size,
+part.y*size,
+size-2,
+size-2
+);
+
+});
+
+
+document.getElementById(
+"snakeScore"
+).textContent=snakeScore;
 
 }
 
 
-leaderboard.push({
+function stopSnake(){
 
-name:name,
-score:coins
+clearInterval(snakeTimer);
 
-});
+games++;
 
+localStorage.setItem("games",games);
+
+let reward=snakeScore*5;
+
+earn(reward);
+
+if(snakeScore>bestSnake){
+
+bestSnake=snakeScore;
 
 localStorage.setItem(
-"ffLeaderboard",
-JSON.stringify(
-leaderboard
-)
+"bestSnake",
+bestSnake
 );
 
+}
 
-displayLeaderboard();
+update();
 
-document.getElementById("name").value="";
+alert(
+"Game Over!\n"+
+"Score: "+snakeScore+
+"\nCoins: +"+reward
+);
+
+}
+
+
+function move(dir){
+
+if(dir==="up"&&direction.y!==1)
+direction={x:0,y:-1};
+
+if(dir==="down"&&direction.y!==-1)
+direction={x:0,y:1};
+
+if(dir==="left"&&direction.x!==1)
+direction={x:-1,y:0};
+
+if(dir==="right"&&direction.x!==-1)
+direction={x:1,y:0};
+
+}
+
+
+document.addEventListener(
+"keydown",
+e=>{
+
+if(e.key==="ArrowUp")move("up");
+if(e.key==="ArrowDown")move("down");
+if(e.key==="ArrowLeft")move("left");
+if(e.key==="ArrowRight")move("right");
+
+});
+
+
+/* ===============================
+   REACTION
+================================ */
+
+let reactionReady=false;
+
+let reactionStart;
+
+let reactionTimeout;
+
+
+function startReaction(){
+
+reactionReady=false;
+
+const box=
+document.getElementById("reactionBox");
+
+box.className="reaction wait";
+
+document.getElementById(
+"reactionText"
+).textContent="WAIT...";
+
+document.getElementById(
+"reactionInfo"
+).textContent=
+"Do not click yet.";
+
+clearTimeout(reactionTimeout);
+
+reactionTimeout=
+setTimeout(()=>{
+
+reactionReady=true;
+
+reactionStart=
+performance.now();
+
+box.className="reaction go";
+
+document.getElementById(
+"reactionText"
+).textContent=
+"CLICK NOW!";
+
+document.getElementById(
+"reactionInfo"
+).textContent=
+"GO!";
+
+},
+1500+
+Math.random()*3000
+);
+
+}
+
+
+document.getElementById(
+"reactionBox"
+).onclick=function(){
+
+if(!reactionReady)return;
+
+const result=
+Math.round(
+performance.now()-reactionStart
+);
+
+reactionReady=false;
+
+let reward=15;
+
+if(result<250)
+reward=100;
+else if(result<350)
+reward=75;
+else if(result<500)
+reward=50;
+else if(result<700)
+reward=30;
+
+earn(reward);
+
+games++;
+
+localStorage.setItem("games",games);
+
+update();
+
+document.getElementById(
+"reactionText"
+).textContent=
+result+" ms";
+
+document.getElementById(
+"reactionInfo"
+).textContent=
+"Coins earned: "+reward;
 
 };
 
 
-displayLeaderboard();
+/* ===============================
+   MEMORY
+================================ */
+
+const symbols=[
+"🔥","🔥",
+"⚡","⚡",
+"🎯","🎯",
+"💎","💎",
+"👑","👑",
+"🚀","🚀",
+"🐺","🐺",
+"💀","💀"
+];
+
+let first=null;
+
+let second=null;
+
+let locked=false;
+
+let matched=0;
+
+let moves=0;
+
+
+function startMemory(){
+
+const grid=
+document.getElementById(
+"memoryGrid"
+);
+
+grid.innerHTML="";
+
+first=null;
+second=null;
+locked=false;
+matched=0;
+moves=0;
+
+document.getElementById(
+"moves"
+).textContent=0;
+
+let cards=
+[...symbols];
+
+cards.sort(
+()=>Math.random()-.5
+);
+
+cards.forEach(symbol=>{
+
+const card=
+document.createElement("button");
+
+card.textContent="?";
+
+card.dataset.symbol=symbol;
+
+card.onclick=
+()=>flip(card);
+
+grid.appendChild(card);
+
+});
+
+}
+
+
+function flip(card){
+
+if(locked)return;
+
+if(
+card.classList.contains("open")||
+card.classList.contains("done")
+)return;
+
+card.classList.add("open");
+
+card.textContent=
+card.dataset.symbol;
+
+if(!first){
+
+first=card;
+
+return;
+
+}
+
+second=card;
+
+moves++;
+
+document.getElementById(
+"moves"
+).textContent=moves;
+
+if(
+first.dataset.symbol===
+second.dataset.symbol
+){
+
+first.classList.add("done");
+
+second.classList.add("done");
+
+matched+=2;
+
+first=null;
+second=null;
+
+if(matched===symbols.length){
+
+finishMemory();
+
+}
+
+}else{
+
+locked=true;
+
+setTimeout(()=>{
+
+first.classList.remove("open");
+
+second.classList.remove("open");
+
+first.textContent="?";
+
+second.textContent="?";
+
+first=null;
+second=null;
+
+locked=false;
+
+},700);
+
+}
+
+}
+
+
+function finishMemory(){
+
+games++;
+
+localStorage.setItem(
+"games",
+games
+);
+
+let reward=
+Math.max(
+20,
+150-moves*5
+);
+
+earn(reward);
+
+alert(
+"Memory complete!\n"+
+"Moves: "+moves+
+"\nCoins: +"+reward
+);
+
+}
+
+
+startMemory();
+
+
+/* ===============================
+   PROFILE
+================================ */
+
+function saveName(){
+
+const value=
+document.getElementById(
+"nameInput"
+).value.trim();
+
+if(!value){
+
+alert("Enter a name.");
+
+return;
+
+}
+
+player=value;
+
+localStorage.setItem(
+"player",
+player
+);
+
+update();
+
+alert("Profile saved.");
+
+}
+
+
+/* ===============================
+   COPY CODE
+================================ */
+
+function copyCode(code){
+
+navigator.clipboard
+.writeText(code)
+.then(()=>{
+
+alert(
+"Code copied: "+code
+);
+
+})
+.catch(()=>{
+
+alert(
+"Copy failed. Copy manually."
+);
+
+});
+
+}
 
 </script>
 
